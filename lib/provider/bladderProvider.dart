@@ -58,7 +58,7 @@ class BladderProvider with ChangeNotifier {
               ))
           .toList();
       _graphData.addAll(newgraphData);
-  
+      print(_userValue);
       notifyListeners();
     } catch (e) {
       debugPrint('Error fetching bladder data: $e');
