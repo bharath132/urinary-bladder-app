@@ -19,7 +19,10 @@ class History extends StatelessWidget {
             children: [
               Icon(Icons.history, size: 30),
               SizedBox(width: 8),
-              Text('Recent History', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(
+                'Recent History',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
             ],
           ),
         ),
@@ -48,17 +51,27 @@ class History extends StatelessWidget {
                 ],
               ),
               child: ListTile(
-                leading: const Icon(Icons.water_drop_sharp, color: Color.fromARGB(255, 0, 138, 252)),
+                leading: const Icon(
+                  Icons.water_drop_sharp,
+                  color: Color.fromARGB(255, 0, 138, 252),
+                ),
                 title: RichText(
                   text: TextSpan(
                     children: [
                       TextSpan(
                         text: '${entry['value']} ',
-                        style: const TextStyle(color: Colors.black, fontSize: 16),
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 16,
+                        ),
                       ),
                       const TextSpan(
                         text: 'ml',
-                        style: TextStyle(color: Color(0xFF015AFF), fontWeight: FontWeight.bold, fontSize: 18),
+                        style: TextStyle(
+                          color: Color(0xFF015AFF),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
                       ),
                     ],
                   ),
@@ -76,27 +89,50 @@ class History extends StatelessWidget {
         if (bladderProvider.hasMoreHistory)
           Center(
             child: Container(
+              margin: const EdgeInsets.only(top: 20),
               decoration: BoxDecoration(
-                color: Colors.blue,
-                borderRadius: BorderRadius.circular(8),
+                gradient: const LinearGradient(
+                  colors: [Colors.blue, Color.fromARGB(255, 109, 179, 235)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(10),
+        boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)],
               ),
               child: TextButton.icon(
                 onPressed: () => bladderProvider.loadMoreHistory(),
-                icon: const Icon(Icons.expand_more),
-                label: const Text("Load More"),
+                icon: const Icon(Icons.expand_more , color: Colors.white),
+                label: const Text(
+                  "Load More",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           ),
         // Load Less Button
         if (bladderProvider.hasLessHistory)
           Center(
-            child: TextButton.icon(
-              onPressed: () {
-                bladderProvider.loadLessHistory(); // Reset to first page
-
-              },
-              icon: const Icon(Icons.expand_less),
-              label: const Text("Load Less"),
+            child: Container(
+              margin: const EdgeInsets.only(top: 20),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [Colors.blue, Color.fromARGB(255, 109, 179, 235)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(10),
+        boxShadow: [BoxShadow(color: Colors.grey, blurRadius: 5)],
+              ),
+              child: TextButton.icon(
+                onPressed: () {
+                  bladderProvider.loadLessHistory(); // Reset to first page
+                },
+                icon: const Icon(Icons.expand_less , color: Colors.white),
+                label: const Text(
+                  "Load Less",
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
             ),
           ),
       ],
