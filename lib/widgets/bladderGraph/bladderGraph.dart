@@ -28,6 +28,17 @@ class _BladderGraphState extends State<BladderGraph> {
           enablePanning: true,
           zoomMode: ZoomMode.x,
         ),
+        tooltipBehavior: TooltipBehavior(
+          enable: true,
+          header: '',
+          format: 'Time: {point.x}\nBladder Level: {point.y} ml',
+          textStyle: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: const Color.fromARGB(255, 255, 255, 255),
+          ),
+        ),
+    
         primaryXAxis: DateTimeAxis(
           axisLine: AxisLine(width: 0),
           title: AxisTitle(
@@ -85,7 +96,12 @@ class _BladderGraphState extends State<BladderGraph> {
             dataSource: graphData,
             xValueMapper: (data, _) => data.time,
             yValueMapper: (data, _) => data.value,
-
+            markerSettings: const MarkerSettings(
+              isVisible: true,
+              color: Color.fromARGB(255, 0, 102, 235),
+              borderColor: Colors.white,
+              borderWidth: 2,
+            ),
             // color: Colors.blue,
             animationDuration: 0,
             animationDelay: 0,

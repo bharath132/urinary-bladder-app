@@ -37,6 +37,9 @@ class BladderProvider with ChangeNotifier {
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
       _fetchBladderData();
     });
+    _timer = Timer.periodic(const Duration(seconds: 10), (_) {
+      _fetchBladderData2();
+    });
   }
 
   void stopTimer() {
@@ -51,14 +54,41 @@ class BladderProvider with ChangeNotifier {
 
       _history = List<Map<String, dynamic>>.from(jsonData['history'] ?? []);
 
-      late List<TimeValueSpot> newgraphData = (jsonData['ChartData'] as List)
+      // late List<TimeValueSpot> newgraphData = (jsonData['ChartData'] as List)
+      //     .map((entry) => TimeValueSpot(
+      //           time: DateTime.parse(entry['time']),
+      //           value: (entry['value'] as num).toDouble(),
+      //         ))
+      //     .toList();
+      // _graphData.addAll(newgraphData);
+    
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error fetching bladder data: $e');
+    }
+  }
+    Future<void> _fetchBladderData2() async {
+    try {
+      final jsonData = await ApiService.fetchBladderData();
+
+      
+
+      _history = List<Map<String, dynamic>>.from(jsonData['history'] ?? []);
+
+      // late List<TimeValueSpot> newgraphData = (jsonData['ChartData'] as List)
+      //     .map((entry) => TimeValueSpot(
+      //           time: DateTime.parse(entry['time']),
+      //           value: (entry['value'] as num).toDouble(),
+      //         ))
+      //     .toList();
+      // _graphData.addAll(newgraphData);
+      _graphData = (jsonData['ChartData'] as List)
           .map((entry) => TimeValueSpot(
                 time: DateTime.parse(entry['time']),
                 value: (entry['value'] as num).toDouble(),
               ))
           .toList();
-      _graphData.addAll(newgraphData);
-      print(_userValue);
+     
       notifyListeners();
     } catch (e) {
       debugPrint('Error fetching bladder data: $e');

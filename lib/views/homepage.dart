@@ -8,24 +8,32 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
+      backgroundColor: Colors.grey[200],
+
       appBar: AppBar(
-        title: const Text('Urinary Bladder Level'),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-               InfoCard(),
-        
-               BladderGraphLayout(),
-              const SizedBox(height: 16),
-               History( ),
-              const SizedBox(height: 16),
-            ],
+        toolbarHeight: 80,
+        title: const Text(
+          'Urinary Bladder Level',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
+        ),
+        centerTitle: true,
+        backgroundColor: const Color.fromARGB(255, 0, 138, 252),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            InfoCard(),
+
+            BladderGraphLayout(),
+            const SizedBox(height: 16),
+            History(),
+            const SizedBox(height: 16),
+          ],
         ),
       ),
     );
