@@ -4,18 +4,17 @@ import 'package:urinary_bladder_level/core/services/apiService.dart';
 import 'package:urinary_bladder_level/core/services/notificationService.dart';
 import 'package:urinary_bladder_level/models/timeValueSpot.dart';
 
-class BladderProvider with ChangeNotifier {
+class BladderProvider with ChangeNotifier, WidgetsBindingObserver {
   String _userValue = '0';
   List<Map<String, dynamic>> _history = [];
   List<TimeValueSpot> _graphData = [];
 
-  Timer? _timer;
+  Timer? _timer1;
+  Timer? _timer2;
 
-  // Pagination
   final int _itemsPerPage = 5;
   int _currentPage = 1;
 
-  // Getters
   String get userValue => _userValue;
   List<Map<String, dynamic>> get history =>
       _history.sublist(0, (_currentPage * _itemsPerPage).clamp(0, _history.length));
@@ -23,79 +22,84 @@ class BladderProvider with ChangeNotifier {
   bool get hasMoreHistory => _currentPage * _itemsPerPage < _history.length;
   bool get hasLessHistory => _currentPage == 5;
 
+  BladderProvider() {
+    WidgetsBinding.instance.addObserver(this);
+    startTimer();
+  }
+
   void loadMoreHistory() {
     _currentPage++;
     notifyListeners();
   }
+
   void loadLessHistory() {
     _currentPage = 1;
     notifyListeners();
   }
 
   void startTimer() {
-    if (_timer?.isActive ?? false) return;
-      fetchFullData();
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+    if ((_timer1?.isActive ?? false) || (_timer2?.isActive ?? false)) return;
+
+    fetchFullData();
+
+    _timer1 = Timer.periodic(const Duration(seconds: 1), (_) {
       _fetchBladderData();
     });
-    _timer = Timer.periodic(const Duration(seconds: 10), (_) {
+
+    _timer2 = Timer.periodic(const Duration(seconds: 10), (_) {
       _fetchBladderData2();
     });
   }
 
   void stopTimer() {
-    _timer?.cancel();
+    _timer1?.cancel();
+    _timer2?.cancel();
+  }
+
+  void notification(String value) {
+    if (value == "500" || value == "1000" || value == "1500") {
+      NotificationService().showNotification(
+        title: 'Bladder Warning',
+        body: 'Your bladder capacity is full at ${_userValue} ml',
+        id: 1,
+      );
+    } else if (value == "2000") {
+      NotificationService().showNotification(
+        title: 'Bladder Alert',
+        body: 'Your bladder capacity is full at ${_userValue} ml. Please empty your bladder.',
+        id: 1,
+      );
+    }
   }
 
   Future<void> _fetchBladderData() async {
     try {
       final jsonData = await ApiService.fetchBladderData();
-
       _userValue = jsonData['userValue'] ?? '0';
-
+      notification(_userValue);
       _history = List<Map<String, dynamic>>.from(jsonData['history'] ?? []);
-
-      // late List<TimeValueSpot> newgraphData = (jsonData['ChartData'] as List)
-      //     .map((entry) => TimeValueSpot(
-      //           time: DateTime.parse(entry['time']),
-      //           value: (entry['value'] as num).toDouble(),
-      //         ))
-      //     .toList();
-      // _graphData.addAll(newgraphData);
-    
       notifyListeners();
-      
     } catch (e) {
       debugPrint('Error fetching bladder data: $e');
     }
   }
-    Future<void> _fetchBladderData2() async {
+
+  Future<void> _fetchBladderData2() async {
     try {
       final jsonData = await ApiService.fetchBladderData();
-
-      
-
       _history = List<Map<String, dynamic>>.from(jsonData['history'] ?? []);
-
-      // late List<TimeValueSpot> newgraphData = (jsonData['ChartData'] as List)
-      //     .map((entry) => TimeValueSpot(
-      //           time: DateTime.parse(entry['time']),
-      //           value: (entry['value'] as num).toDouble(),
-      //         ))
-      //     .toList();
-      // _graphData.addAll(newgraphData);
       _graphData = (jsonData['ChartData'] as List)
           .map((entry) => TimeValueSpot(
                 time: DateTime.parse(entry['time']),
                 value: (entry['value'] as num).toDouble(),
               ))
           .toList();
-     
       notifyListeners();
     } catch (e) {
       debugPrint('Error fetching bladder data: $e');
     }
   }
+
   Future<void> fetchFullData() async {
     try {
       final jsonData = await ApiService.fetchFullData();
@@ -107,13 +111,12 @@ class BladderProvider with ChangeNotifier {
                 value: (entry['value'] as num).toDouble(),
               ))
           .toList();
-        print('Graph data: ${_graphData.map((e) => '${e.time}:${e.value}').toList()}');
+      debugPrint('Graph data: ${_graphData.map((e) => '${e.time}:${e.value}').toList()}');
       notifyListeners();
       NotificationService().showNotification(
         title: 'Bladder Alert',
         body: 'Your bladder capacity is full at ${_userValue} ml',
         id: 1,
-
       );
     } catch (e) {
       debugPrint('Error fetching full data: $e');
@@ -121,8 +124,20 @@ class BladderProvider with ChangeNotifier {
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      stopTimer();
+      debugPrint('App paused - Timer stopped');
+    } else if (state == AppLifecycleState.resumed) {
+      startTimer();
+      debugPrint('App resumed - Timer restarted');
+    }
+  }
+
+  @override
   void dispose() {
-    _timer?.cancel();
+    stopTimer();
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 }

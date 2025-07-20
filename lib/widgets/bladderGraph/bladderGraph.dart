@@ -15,6 +15,30 @@ class _BladderGraphState extends State<BladderGraph> {
   @override
   Widget build(BuildContext context) {
     final graphData = context.watch<BladderProvider>().graphData;
+    if (graphData.isEmpty) {
+      return const Center(
+        child: Text(
+          'No data available',
+          style: TextStyle(fontSize: 16, color: Colors.grey),
+        ),
+      );
+    }
+    // Check for invalid data points
+    if (graphData.any((e) => e.value.isNaN || e.value.isInfinite)) {
+      return const Center(
+        child: Text(
+          'Invalid data points detected',
+          style: TextStyle(fontSize: 16, color: Colors.red),
+        ),
+      );
+    }
+    // Log valid and invalid points
+    for (var e in graphData) {
+      if (e.value.isFinite) {
+        print('✅ Valid point: ${e.time} => ${e.value}');
+      }
+    }
+    
     for (var e in graphData) {
       if (!e.value.isFinite) {
         print('❌ Invalid point: ${e.time} => ${e.value}');
@@ -67,6 +91,14 @@ class _BladderGraphState extends State<BladderGraph> {
           initialVisibleMinimum: DateTime.now().subtract(Duration(minutes: 10)),
           initialVisibleMaximum: DateTime.now(),
         ),
+        title: ChartTitle(
+          text: 'Bladder Level Over Time',
+          textStyle: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: const Color.fromARGB(255, 0, 0, 0),
+          ),
+        ),
         primaryYAxis: NumericAxis(
           axisLine: AxisLine(width: 0),
           title: AxisTitle(
@@ -97,10 +129,10 @@ class _BladderGraphState extends State<BladderGraph> {
             xValueMapper: (data, _) => data.time,
             yValueMapper: (data, _) => data.value,
             markerSettings: const MarkerSettings(
-              isVisible: true,
+              isVisible: false,
               color: Color.fromARGB(255, 0, 102, 235),
               borderColor: Colors.white,
-              borderWidth: 2,
+              borderWidth: 5,
             ),
             // color: Colors.blue,
             animationDuration: 0,

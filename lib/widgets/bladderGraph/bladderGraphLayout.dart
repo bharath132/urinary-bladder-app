@@ -11,7 +11,7 @@ class BladderGraphLayout extends StatelessWidget {
       // chart
       width: double.infinity,
       height: 300,
-      padding: EdgeInsets.only(left: 0, right: 16, top: 16, bottom: 0),
+      padding: EdgeInsets.only(left: 0, right: 16, top: 0, bottom: 0),
       margin: EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.white,

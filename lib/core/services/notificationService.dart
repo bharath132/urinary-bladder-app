@@ -46,6 +46,7 @@ class NotificationService {
         priority: Priority.high,
         playSound: true,
         showWhen: true,
+        icon: '@mipmap/waterdrop',
         enableLights: true,
         enableVibration: true,
         styleInformation: DefaultStyleInformation(

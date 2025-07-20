@@ -25,22 +25,19 @@ class HomePage extends StatelessWidget {
         centerTitle: true,
         backgroundColor: const Color.fromARGB(255, 0, 138, 252),
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            FloatingActionButton(onPressed: (){
-              NotificationService().showNotification(
-                title: ' ⚠️ Test Notification',
-                body: 'This is a test notification from the app.',
-              );
-            }, backgroundColor: const Color.fromARGB(255, 0, 138, 252), child: const Icon(Icons.refresh)),
-            InfoCard(),
-
-            BladderGraphLayout(),
-            const SizedBox(height: 16),
-            History(),
-            const SizedBox(height: 16),
-          ],
+      body: const SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              
+              InfoCard(),
+        
+              BladderGraphLayout(),
+              SizedBox(height: 16),
+              History(),
+              SizedBox(height: 16),
+            ],
+          ),
         ),
       ),
     );
