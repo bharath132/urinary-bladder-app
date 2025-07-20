@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:urinary_bladder_level/core/services/apiService.dart';
+import 'package:urinary_bladder_level/core/services/notificationService.dart';
 import 'package:urinary_bladder_level/models/timeValueSpot.dart';
 
 class BladderProvider with ChangeNotifier {
@@ -63,6 +64,7 @@ class BladderProvider with ChangeNotifier {
       // _graphData.addAll(newgraphData);
     
       notifyListeners();
+      
     } catch (e) {
       debugPrint('Error fetching bladder data: $e');
     }
@@ -107,6 +109,12 @@ class BladderProvider with ChangeNotifier {
           .toList();
         print('Graph data: ${_graphData.map((e) => '${e.time}:${e.value}').toList()}');
       notifyListeners();
+      NotificationService().showNotification(
+        title: 'Bladder Alert',
+        body: 'Your bladder capacity is full at ${_userValue} ml',
+        id: 1,
+
+      );
     } catch (e) {
       debugPrint('Error fetching full data: $e');
     }

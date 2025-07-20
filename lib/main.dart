@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:urinary_bladder_level/core/services/notificationService.dart';
 import 'package:urinary_bladder_level/provider/bladderProvider.dart';
 import 'package:urinary_bladder_level/views/homepage.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // Initialize the notification service
+   await NotificationService().initNotification(); 
   runApp(
     MultiProvider(
       providers: [

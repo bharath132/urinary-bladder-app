@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:urinary_bladder_level/core/services/notificationService.dart';
 import 'package:urinary_bladder_level/widgets/bladderGraph/bladderGraphLayout.dart';
 import 'package:urinary_bladder_level/widgets/history.dart';
 import 'package:urinary_bladder_level/widgets/infoCard.dart';
@@ -27,6 +28,12 @@ class HomePage extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            FloatingActionButton(onPressed: (){
+              NotificationService().showNotification(
+                title: ' ⚠️ Test Notification',
+                body: 'This is a test notification from the app.',
+              );
+            }, backgroundColor: const Color.fromARGB(255, 0, 138, 252), child: const Icon(Icons.refresh)),
             InfoCard(),
 
             BladderGraphLayout(),
